@@ -5,14 +5,50 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: 'sa-east-1'
+  iam:
+      role:
+          statements:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:GetItem
+                - dynamodb:Scan
+              Resource:
+                - arn:aws:dynamodb:sa-east-1:947925817241:table/ItemTableNew
 
 functions:
-  api:
-    handler: src/index.handler
+  hello:
+    handler: src/handler.hello
     events:
-      - httpApi:
+      - http:
           path: /
           method: get
+  insertItem:
+    handler: src/insertItem.handler
+    events:
+      - http:
+          path: /item
+          method: post
+  fetchItems:
+    handler: src/fetchItems.handler
+    events:
+      - http:
+          path: /items
+          method: get
+  fetchItem:
+    handler: src/fetchItem.handler
+    events:
+      - http:
+          path: /items/{id}
+          method: get
+  updateItem:
+    handler: src/updateItem.handler
+    events:
+      - http:
+          path: /items/{id}
+          method: put
+
 resources:
   Resources:
     ItemTableNew:
